@@ -1,0 +1,556 @@
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Nutrition Deficiency Prediction System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f8f5;
+            color: #26352b;
+        }
+
+        header {
+            background: linear-gradient(135deg, #198754, #0d6b45);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            opacity: 0.9;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            color: #198754;
+            margin-bottom: 20px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            border: 1px solid #ccd6cf;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #198754;
+        }
+
+        .nutrient-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .nutrient {
+            background: #f7faf8;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #198754;
+        }
+
+        .nutrient input {
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .unit {
+            color: #777;
+            font-size: 12px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 15px;
+            border: none;
+            border-radius: 9px;
+            background: #198754;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #146c43;
+        }
+
+        #results {
+            display: none;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .normal {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .danger {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .result-card {
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border-top: 5px solid #dc3545;
+        }
+
+        .result-card h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .result-card .level {
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        .recommendations {
+            margin-top: 20px;
+        }
+
+        .recommendations li {
+            margin: 10px 0;
+            padding-left: 5px;
+        }
+
+        .disclaimer {
+            font-size: 13px;
+            color: #666;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        @media (max-width: 750px) {
+            .form-grid,
+            .nutrient-grid,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🥗 Food Nutrition Deficiency Prediction System</h1>
+    <p>Analyze nutritional intake and identify possible nutrient deficiencies</p>
+</header>
+
+<div class="container">
+
+    <!-- Personal Information -->
+    <div class="card">
+        <h2>👤 Personal Information</h2>
+
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" id="age" min="1" max="120" placeholder="Age">
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                <select id="gender">
+                    <option value="">Select Gender</option>
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="activity">Activity Level</label>
+                <select id="activity">
+                    <option value="">Select Activity</option>
+                    <option value="low">Low</option>
+                    <option value="moderate">Moderate</option>
+                    <option value="high">High</option>
+                </select>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Nutrient Information -->
+    <div class="card">
+
+        <h2>🍎 Daily Nutrient Intake</h2>
+
+        <div class="nutrient-grid">
+
+            <div class="nutrient">
+                <label>Iron</label>
+                <span class="unit">mg/day</span>
+                <input type="number" id="iron" min="0" step="0.1" placeholder="Example: 8">
+            </div>
+
+            <div class="nutrient">
+                <label>Vitamin A</label>
+                <span class="unit">µg/day</span>
+                <input type="number" id="vitaminA" min="0" placeholder="Example: 500">
+            </div>
+
+            <div class="nutrient">
+                <label>Vitamin B12</label>
+                <span class="unit">µg/day</span>
+                <input type="number" id="b12" min="0" step="0.1" placeholder="Example: 2">
+            </div>
+
+            <div class="nutrient">
+                <label>Vitamin C</label>
+                <span class="unit">mg/day</span>
+                <input type="number" id="vitaminC" min="0" placeholder="Example: 50">
+            </div>
+
+            <div class="nutrient">
+                <label>Vitamin D</label>
+                <span class="unit">µg/day</span>
+                <input type="number" id="vitaminD" min="0" step="0.1" placeholder="Example: 10">
+            </div>
+
+            <div class="nutrient">
+                <label>Calcium</label>
+                <span class="unit">mg/day</span>
+                <input type="number" id="calcium" min="0" placeholder="Example: 700">
+            </div>
+
+            <div class="nutrient">
+                <label>Zinc</label>
+                <span class="unit">mg/day</span>
+                <input type="number" id="zinc" min="0" step="0.1" placeholder="Example: 7">
+            </div>
+
+            <div class="nutrient">
+                <label>Protein</label>
+                <span class="unit">g/day</span>
+                <input type="number" id="protein" min="0" step="0.1" placeholder="Example: 45">
+            </div>
+
+            <div class="nutrient">
+                <label>Folate</label>
+                <span class="unit">µg/day</span>
+                <input type="number" id="folate" min="0" placeholder="Example: 250">
+            </div>
+
+        </div>
+
+        <button onclick="predictDeficiency()">
+            🔍 Predict Nutrition Deficiencies
+        </button>
+
+    </div>
+
+
+    <!-- Results -->
+    <div class="card" id="results">
+
+        <h2>📊 Prediction Results</h2>
+
+        <div id="overallStatus"></div>
+
+        <div class="result-grid" id="resultGrid"></div>
+
+        <div class="recommendations">
+            <h2>🥦 Food Recommendations</h2>
+            <ul id="recommendationList"></ul>
+        </div>
+
+        <p class="disclaimer">
+            ⚠️ This system is a demonstration/educational prediction tool and does not
+            provide a medical diagnosis. Nutrient requirements vary by age, sex,
+            pregnancy status, health conditions, medications, and other factors.
+            Consult a qualified healthcare professional for personalized nutritional advice.
+        </p>
+
+    </div>
+
+</div>
+
+<footer>
+    © 2026 Food Nutrition Deficiency Prediction System
+</footer>
+
+
+<script>
+
+function getValue(id) {
+    return parseFloat(document.getElementById(id).value) || 0;
+}
+
+
+function predictDeficiency() {
+
+    const name = document.getElementById("name").value || "User";
+    const age = getValue("age");
+
+    const nutrients = {
+        "Iron": {
+            value: getValue("iron"),
+            normal: 10,
+            unit: "mg/day",
+            foods: "Spinach, lentils, beans, chickpeas, sesame seeds and iron-fortified foods."
+        },
+
+        "Vitamin A": {
+            value: getValue("vitaminA"),
+            normal: 600,
+            unit: "µg/day",
+            foods: "Carrots, sweet potatoes, spinach, pumpkin, mango and leafy vegetables."
+        },
+
+        "Vitamin B12": {
+            value: getValue("b12"),
+            normal: 2.4,
+            unit: "µg/day",
+            foods: "Milk, eggs, fish, meat and B12-fortified foods."
+        },
+
+        "Vitamin C": {
+            value: getValue("vitaminC"),
+            normal: 65,
+            unit: "mg/day",
+            foods: "Guava, oranges, lemons, amla, tomatoes, capsicum and other fruits."
+        },
+
+        "Vitamin D": {
+            value: getValue("vitaminD"),
+            normal: 15,
+            unit: "µg/day",
+            foods: "Sunlight exposure, fortified milk, eggs and fatty fish."
+        },
+
+        "Calcium": {
+            value: getValue("calcium"),
+            normal: 1000,
+            unit: "mg/day",
+            foods: "Milk, yogurt, ragi, sesame seeds, tofu and leafy vegetables."
+        },
+
+        "Zinc": {
+            value: getValue("zinc"),
+            normal: 8,
+            unit: "mg/day",
+            foods: "Beans, nuts, seeds, whole grains, dairy products and eggs."
+        },
+
+        "Protein": {
+            value: getValue("protein"),
+            normal: 50,
+            unit: "g/day",
+            foods: "Dal, beans, eggs, milk, yogurt, fish, chicken, soy and nuts."
+        },
+
+        "Folate": {
+            value: getValue("folate"),
+            normal: 300,
+            unit: "µg/day",
+            foods: "Spinach, beans, lentils, broccoli, avocado and fortified grains."
+        }
+    };
+
+
+    const resultGrid = document.getElementById("resultGrid");
+    const recommendationList =
+        document.getElementById("recommendationList");
+
+    resultGrid.innerHTML = "";
+    recommendationList.innerHTML = "";
+
+    let deficiencies = 0;
+
+    Object.keys(nutrients).forEach(function(nutrient) {
+
+        const data = nutrients[nutrient];
+
+        let percentage = (data.value / data.normal) * 100;
+
+        let level = "";
+        let className = "";
+
+        if (data.value === 0 || percentage < 50) {
+            level = "High Risk";
+            className = "danger";
+            deficiencies++;
+        }
+        else if (percentage < 80) {
+            level = "Possible Deficiency";
+            className = "warning";
+            deficiencies++;
+        }
+        else {
+            level = "Adequate";
+            className = "normal";
+        }
+
+        const card = document.createElement("div");
+
+        card.className = "result-card";
+
+        card.innerHTML = `
+            <h3>${nutrient}</h3>
+            <p>
+                Intake:
+                <strong>${data.value} ${data.unit}</strong>
+            </p>
+
+            <p>
+                Reference level:
+                <strong>${data.normal} ${data.unit}</strong>
+            </p>
+
+            <p class="level">
+                Status: ${level}
+            </p>
+        `;
+
+        resultGrid.appendChild(card);
+
+        if (level !== "Adequate") {
+
+            const li = document.createElement("li");
+
+            li.innerHTML =
+                `<strong>${nutrient}:</strong> ${data.foods}`;
+
+            recommendationList.appendChild(li);
+        }
+
+    });
+
+
+    const overallStatus =
+        document.getElementById("overallStatus");
+
+    if (deficiencies === 0) {
+
+        overallStatus.className = "status normal";
+
+        overallStatus.innerHTML =
+            `✅ ${name}, your entered nutrient intake appears adequate
+             according to this simplified screening model.`;
+
+    }
+    else if (deficiencies <= 3) {
+
+        overallStatus.className = "status warning";
+
+        overallStatus.innerHTML =
+            `⚠️ ${name}, the system detected ${deficiencies}
+             nutrient area(s) that may need attention.`;
+
+    }
+    else {
+
+        overallStatus.className = "status danger";
+
+        overallStatus.innerHTML =
+            `🚨 ${name}, the system detected several nutrient
+             areas that may be below the simplified reference levels.
+             Consider discussing your diet with a healthcare professional.`;
+
+    }
+
+
+    document.getElementById("results").style.display = "block";
+
+    document.getElementById("results")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
+
+</script>
+
+</body>
+</html>
+```
